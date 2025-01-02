@@ -8,14 +8,50 @@
 import SwiftUI
 
 struct ContentView: View {
+
+    @State private var viewModel = TicTacToeAIViewModel()
+    @Environment(\.colorScheme) var colorScheme
+
+    let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
+
+    var isDarkMode: Bool {
+        colorScheme == .dark
+    }
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        LazyVGrid(columns: columns) {
+            ForEach(0..<9) { i in
+                ZStack {
+                    Color(isDarkMode ? .black : .white)
+                    if let player = viewModel.board.board[i] {
+                        PlayerView(player: player, isDarkMode: isDarkMode)
+                    }
+                }
+                .aspectRatio(contentMode: .fit)
+                .onTapGesture {
+                    viewModel.placeMark(
+                        at: i, player: viewModel.currentPlayer)
+                }
+
+            }
         }
-        .padding()
+        .background {
+            Color(isDarkMode ? .white : .black)
+        }
+        .onChange(
+            of: viewModel.currentPlayer,
+            { oldValue, newValue in
+                if newValue == .playerO {
+                        let bestMove = viewModel.bestMove()
+                        viewModel.placeMark(at: bestMove, player: .playerO)
+                }
+            }
+        )
+        .padding(.horizontal, 40)
     }
 }
 
