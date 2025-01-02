@@ -1,1 +1,1 @@
-TicTacToe Ai using the minimax algorithm. Built with SwiftUI
+TicTacToe AI using the minimax algorithm. Built with SwiftUI
